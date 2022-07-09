@@ -1,18 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeviceEntity, DeviceStatus } from '../../entities/device.entity';
+import { UserEntity, DeviceEntity, DeviceStatus } from '../../entities';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../../entities/user.entity';
 import { nanoid } from 'nanoid';
-import moment from 'moment';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class DeviceService {
   constructor(
     @InjectRepository(DeviceEntity)
     private readonly deviceRepository: Repository<DeviceEntity>,
-    private readonly configService: ConfigService,
   ) {}
 
   createRefreshToken() {

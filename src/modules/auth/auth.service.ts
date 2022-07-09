@@ -8,12 +8,11 @@ import { UserEntity } from '../../entities';
 import { Repository } from 'typeorm';
 import { LoginWithPasswordRequestDto } from './dto/login-with-password.request.dto';
 import { ConfigService } from '@nestjs/config';
-import { PermissionService } from '../../common/services/permission.service';
-import { DeviceService } from '../../common/services/device.service';
+import { PermissionService, JwtService } from '../../common/services';
 import notp from 'notp';
 import * as bcrypt from 'bcrypt';
-import { JwtService } from '../../common/services/jwt.service';
 import { TokenPairResponseDto } from './dto/token-pair.response.dto';
+import { DeviceService } from './device.service';
 
 @Injectable()
 export class AuthService {

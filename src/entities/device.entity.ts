@@ -9,7 +9,7 @@ export enum DeviceStatus {
 }
 
 @Entity('devices')
-@Unique('devices_refresh_token_uniq', ['refresh_token'])
+@Unique('devices_refresh_token_uniq', ['refreshToken'])
 export class DeviceEntity {
   @Column({
     type: 'varchar',

@@ -1,4 +1,4 @@
-export { DeviceEntity } from './device.entity';
+export { DeviceEntity, DeviceStatus } from './device.entity';
 export { JobEntity } from './job.entity';
 export { PermissionEntity } from './permission.entity';
 export { RoleEntity } from './role.entity';

@@ -1,22 +1,29 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './data-source';
-import { PermissionService } from './common/services/permission.service';
-import { DeviceService } from './common/services/device.service';
+import { ConfigModule } from '@nestjs/config';
+
+import { CommonModule } from './common/common.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       useFactory() {
-        return {};
+        return {
+          autoLoadEntities: true,
+        };
       },
       async dataSourceFactory() {
         await AppDataSource.initialize();
         return AppDataSource;
       },
     }),
+    CommonModule,
+    AuthModule,
   ],
   controllers: [],
-  providers: [PermissionService, DeviceService],
+  providers: [],
 })
 export class AppModule {}

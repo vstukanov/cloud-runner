@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class initialDbSchema1656756521155 implements MigrationInterface {
-    name = 'initialDbSchema1656756521155'
+export class initialMigration1657369698310 implements MigrationInterface {
+    name = 'initialMigration1657369698310'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`
@@ -32,10 +32,29 @@ export class initialDbSchema1656756521155 implements MigrationInterface {
                 "password" character varying,
                 "full_name" character varying,
                 "status" "public"."users_status_enum" NOT NULL DEFAULT 'pending',
+                "totp_secret" character varying,
                 "joined_at" TIMESTAMP,
                 "last_login_at" TIMESTAMP,
                 CONSTRAINT "users_email_uniq" UNIQUE ("email"),
                 CONSTRAINT "users_pkey" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TYPE "public"."devices_status_enum" AS ENUM('new', 'active', 'revoked', 'expired')
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "devices" (
+                "device_id" character varying NOT NULL,
+                "status" "public"."devices_status_enum" NOT NULL DEFAULT 'new',
+                "ip" character varying NOT NULL,
+                "name" character varying NOT NULL,
+                "type" character varying NOT NULL,
+                "refresh_token" character varying,
+                "created_at" TIMESTAMP NOT NULL,
+                "last_login_with" TIMESTAMP NOT NULL,
+                "user_id" integer,
+                CONSTRAINT "devices_refresh_token_uniq" UNIQUE ("refresh_token"),
+                CONSTRAINT "devices_pkey" PRIMARY KEY ("device_id")
             )
         `);
         await queryRunner.query(`
@@ -113,6 +132,10 @@ export class initialDbSchema1656756521155 implements MigrationInterface {
             CREATE INDEX "IDX_1cf664021f00b9cc1ff95e17de" ON "users_roles" ("role_id")
         `);
         await queryRunner.query(`
+            ALTER TABLE "devices"
+            ADD CONSTRAINT "FK_5e9bee993b4ce35c3606cda194c" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "jobs"
             ADD CONSTRAINT "FK_636ce41345cd88950cd795516c2" FOREIGN KEY ("triggered_by_id") REFERENCES "users"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
@@ -165,6 +188,9 @@ export class initialDbSchema1656756521155 implements MigrationInterface {
             ALTER TABLE "jobs" DROP CONSTRAINT "FK_636ce41345cd88950cd795516c2"
         `);
         await queryRunner.query(`
+            ALTER TABLE "devices" DROP CONSTRAINT "FK_5e9bee993b4ce35c3606cda194c"
+        `);
+        await queryRunner.query(`
             DROP INDEX "public"."IDX_1cf664021f00b9cc1ff95e17de"
         `);
         await queryRunner.query(`
@@ -193,6 +219,12 @@ export class initialDbSchema1656756521155 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TYPE "public"."jobs_status_enum"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "devices"
+        `);
+        await queryRunner.query(`
+            DROP TYPE "public"."devices_status_enum"
         `);
         await queryRunner.query(`
             DROP TABLE "users"
