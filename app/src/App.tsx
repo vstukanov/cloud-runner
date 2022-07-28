@@ -16,11 +16,11 @@ const config: ConfigType = {
 };
 
 function Router() {
-  const { user } = useSession();
-
-  if (!user) {
-    return <AppLoginPage />;
-  }
+  // const { user } = useSession();
+  //
+  // if (!user) {
+  //   return <AppLoginPage />;
+  // }
 
   return (
     <AppLayout>
