@@ -8,6 +8,6 @@ export const AppDataSource = new DataSource({
   logging: false,
   entities: ['dist/entities/*.entity.js'],
   migrations: ['dist/migrations/*.js'],
-  synchronize: false,
+  synchronize: true,
   namingStrategy: new SnakeNamingStrategy(),
 });

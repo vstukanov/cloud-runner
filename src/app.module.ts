@@ -1,3 +1,5 @@
+import * as config from 'config';
+
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppDataSource } from './data-source';
@@ -8,7 +10,10 @@ import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [() => config.util.toObject(config)],
+    }),
     TypeOrmModule.forRootAsync({
       useFactory() {
         return {

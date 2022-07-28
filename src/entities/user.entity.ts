@@ -16,6 +16,7 @@ export enum UserStatus {
 
 @Entity('users')
 @Unique('users_email_uniq', ['email'])
+@Unique('users_invitation_code_uniq', ['invitationCode'])
 export class UserEntity {
   @PrimaryGeneratedColumn({ primaryKeyConstraintName: 'users_pkey' })
   id: number;
@@ -39,6 +40,9 @@ export class UserEntity {
     inverseJoinColumn: { name: 'role_id' },
   })
   roles: RoleEntity[];
+
+  @Column({ type: 'varchar' })
+  invitationCode: string;
 
   @Column({ type: 'varchar', nullable: true })
   totpSecret: string;

@@ -1,7 +1,9 @@
 import { ConfigService } from '@nestjs/config';
 import { UserEntity, DeviceEntity } from '../../entities';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
+import { Injectable } from '@nestjs/common';
 
+@Injectable()
 export class JwtService {
   constructor(private readonly configService: ConfigService) {}
 
