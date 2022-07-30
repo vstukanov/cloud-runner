@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  api:
+    container_name: "api"
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports: 
+      - "8080:3000"
+    depends_on:
+      - "postgres"
+    env_file:
+      - ./.env
+  
+  postgres:
+    container_name: "psql"
+    image: "postgres:14"
+    restart: always
+    expose:
+      - 5432
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: cloud-runner
+      POSTGRES_USER: api
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    
+volumes:
+  db-data:
+  
