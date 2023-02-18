@@ -19,5 +19,5 @@
     "noFallthroughCasesInSwitch": false
   },
   "include": ["src"],
-  "exclude": ["app", "node_modules", "dist"]
+  "exclude": ["app", "node_modules", "dist", "db-data"]
 }

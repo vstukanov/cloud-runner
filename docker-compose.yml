@@ -6,14 +6,14 @@ services:
       dockerfile: Dockerfile
       context: .
     ports: 
-      - "8080:3000"
+      - "8080:80"
     depends_on:
       - "postgres"
     env_file:
-      - ./.env
+      - ./.env.docker
   
   postgres:
-    container_name: "psql"
+    container_name: "postgres"
     image: "postgres:14"
     restart: always
     expose:
@@ -23,9 +23,9 @@ services:
     environment:
       POSTGRES_DB: cloud-runner
       POSTGRES_USER: api
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_PASSWORD: password
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - ./db-data:/var/lib/postgresql/data
     
 volumes:
   db-data:

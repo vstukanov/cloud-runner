@@ -16,26 +16,41 @@ function factoryFormat(service: string, type: string) {
       );
 
     default:
-      throw new Error(`Unsupported logger type ${type}`);
+      throw new Error(`Unsupported format type ${type}`);
   }
 }
 
+interface LoggerConfigTransportType {
+  type: 'console';
+  format: 'json' | 'text';
+}
+
+interface LoggerConfigOptions {
+  level: string;
+  transports: LoggerConfigTransportType[];
+}
+
 function getLoggerOptions(service: string, meta?: any) {
-  const { format, ...restOptions } = config.get('logging');
+  const options = config.get<LoggerConfigOptions>('logging');
+
+  const loggerTransports = options.transports.map((tc) => {
+    if (tc.type === 'console') {
+      return new transports.Console({
+        format: factoryFormat(service, tc.format),
+      });
+    }
+
+    throw new Error(`Unsupported transport type ${tc.type}`);
+  });
 
   return {
-    ...restOptions,
+    level: options.level,
     defaultMeta: {
-      hostname: os.hostname(),
       ...meta,
-      ...restOptions?.defaultMeta,
+      hostname: os.hostname(),
       service,
     },
-    transports: [
-      new transports.Console({
-        format: factoryFormat(service, format),
-      }),
-    ],
+    transports: loggerTransports,
   };
 }
 
