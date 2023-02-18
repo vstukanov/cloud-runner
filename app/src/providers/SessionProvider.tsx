@@ -14,6 +14,7 @@ import moment from 'moment';
 import { Space, Spin, Typography } from 'antd';
 import jwtDecode from 'jwt-decode';
 import _ from 'lodash';
+import UAParser from 'ua-parser-js';
 
 type TokensType = {
   refreshToken: string;
@@ -66,8 +67,8 @@ export function SessionProvider(props: any) {
   const storageTokensKey = 'SessionStorage.tokens';
 
   function saveTokens(response: AxiosResponse): TokensType {
-    const refreshToken = response.headers['x-refresh-token'];
-    const accessToken = response.headers['x-access-token'];
+    const refreshToken = response.data.accessToken;
+    const accessToken = response.data.refreshToken;
 
     const token = jwtDecode(accessToken) as any;
 
@@ -104,7 +105,7 @@ export function SessionProvider(props: any) {
     const headers = {
       'Content-Type': 'application/json;charset=UTF-8',
       ...(tokens !== null && {
-        'X-ACCESS-TOKEN': tokens.accessToken,
+        Authorization: `Bearer ${tokens.accessToken}`,
       }),
     };
 
@@ -125,7 +126,11 @@ export function SessionProvider(props: any) {
       }
 
       if (newTokens) {
-        _.set(config, 'headers.X-ACCESS-TOKEN', newTokens.accessToken);
+        _.set(
+          config,
+          'headers.Authorization',
+          `Bearer ${newTokens.accessToken}`,
+        );
         setSession([newTokens, user]);
       }
 
@@ -137,13 +142,27 @@ export function SessionProvider(props: any) {
       user,
 
       async login(email: string, password: string) {
-        const response = await http.post<UserType>('/auth', {
-          email,
-          password,
-        });
+        const ua = new UAParser().getResult();
+
+        const response = await http.post<UserType>(
+          '/auth/login-with-password',
+          {
+            email,
+            password,
+            deviceType: 'web',
+            deviceName: `${ua.browser.name} (${ua.browser.version}) on ${ua.os.name} ${ua.os.version}`,
+          },
+        );
 
         const tokens = saveTokens(response);
-        setSession([tokens, response.data]);
+
+        const userResponse = await defaultHttp.get<UserType>('/users/me', {
+          headers: {
+            Authorization: `Bearer ${tokens.accessToken}`,
+          },
+        });
+
+        setSession([tokens, userResponse.data]);
         return response;
       },
 
@@ -153,7 +172,7 @@ export function SessionProvider(props: any) {
         setSession([null, null]);
       },
     };
-  }, [config, tokens, user, refreshTokens]);
+  }, [config, tokens, user, refreshTokens, defaultHttp]);
 
   const loadSession = useCallback(async () => {
     const tokensJSON = localStorage.getItem(storageTokensKey);
@@ -171,9 +190,9 @@ export function SessionProvider(props: any) {
         tokens = await refreshTokens(tokens);
       }
 
-      const userResponse = await defaultHttp.get<UserType>('/users/my', {
+      const userResponse = await defaultHttp.get<UserType>('/users/me', {
         headers: {
-          'X-ACCESS-TOKEN': tokens.accessToken,
+          Authorization: `Bearer ${tokens.accessToken}`,
         },
       });
 

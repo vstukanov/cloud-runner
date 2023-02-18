@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserEntity, DeviceEntity, DeviceStatus } from '../../entities';
+import { DeviceEntity, DeviceStatus, UserEntity } from '../../entities';
 import { Repository } from 'typeorm';
 import { nanoid } from 'nanoid';
 
@@ -36,6 +36,12 @@ export class DeviceService {
     return this.deviceRepository.create(device.generatedMaps[0]);
   }
 
+  async deactivate(deviceId: string) {
+    const device = await this.deviceRepository.findOneByOrFail({ deviceId });
+    device.status = DeviceStatus.REVOKED;
+    await this.deviceRepository.save(device);
+  }
+
   async refresh(refreshToken: string, ip: string) {
     const device = await this.deviceRepository.findOneBy({
       refreshToken,
@@ -62,5 +68,9 @@ export class DeviceService {
       relations: ['user'],
       relationLoadStrategy: 'query',
     });
+  }
+
+  async getById(deviceId) {
+    return this.deviceRepository.findOneByOrFail({ deviceId });
   }
 }

@@ -1,4 +1,13 @@
-import { Body, Controller, Ip, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Ip,
+  Logger,
+  Post,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AjvValidationPipe } from '../../common';
 import {
   LoginWithPasswordRequestDto,
@@ -13,12 +22,17 @@ import {
   InviteCompleteRequestDto,
   inviteCompleteRequestDtoSchema,
 } from './dto/invite-complete.request.dto';
+import { JwtAuthGuard } from '../../common/jwt.auth.guard';
+import { DeviceService } from './device.service';
 
 @Controller('auth')
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly deviceService: DeviceService,
+  ) {}
 
   @Post('/invite')
   async invite(
@@ -47,5 +61,12 @@ export class AuthController {
     ip: string,
   ) {
     return await this.authService.loginWithPassword(requestDto, ip);
+  }
+
+  @Delete('/')
+  @UseGuards(JwtAuthGuard)
+  async deleteSession(@Request() req) {
+    this.logger.log(JSON.stringify(req.user));
+    await this.deviceService.deactivate(req.user.device.deviceId);
   }
 }

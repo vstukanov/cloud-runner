@@ -4,7 +4,8 @@ require('dotenv').config();
 module.exports = {
   api: {
     host: process.env.HOST ?? '127.0.0.1',
-    port: process.env.PORT ?? 3000,
+    port: process.env.PORT ?? 8080,
+    enableCors: process.env.ENABLE_CORS_ORIGIN ?? 'http://127.0.0.1:3000',
   },
 
   logging: {

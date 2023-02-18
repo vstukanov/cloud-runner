@@ -11,13 +11,13 @@ export class JwtService {
     return this.configService.get('auth.jwt_secret');
   }
 
-  createAccessToken(user: UserEntity) {
+  createAccessToken(user: UserEntity, device: DeviceEntity) {
     const expiresIn = this.configService.get(
       'auth.access_expires_in_minutes',
       15,
     );
 
-    return jwt.sign({ sub: user.id }, this.getSecret(), {
+    return jwt.sign({ sub: user.id, dev: device.deviceId }, this.getSecret(), {
       expiresIn: expiresIn * 60,
     });
   }
@@ -35,7 +35,7 @@ export class JwtService {
 
   createTokenPair(user: UserEntity, device: DeviceEntity) {
     return {
-      accessToken: this.createAccessToken(user),
+      accessToken: this.createAccessToken(user, device),
       refreshToken: this.createRefreshToken(device),
     };
   }

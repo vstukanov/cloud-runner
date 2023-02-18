@@ -23,6 +23,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.7.4",
+    "ua-parser-js": "^1.0.33",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -48,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/ua-parser-js": "^0.7.36"
   }
 }

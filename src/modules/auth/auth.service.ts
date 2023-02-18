@@ -127,11 +127,27 @@ export class AuthService {
       type: request.deviceType,
     });
 
+    user.lastLoginAt = new Date();
+    await this.userRepository.save(user);
+
     return this.jwtService.createTokenPair(user, device);
   }
 
   async refreshToken(token: string, ip: string): Promise<TokenPairResponseDto> {
     const device = await this.deviceService.refresh(token, ip);
     return this.jwtService.createTokenPair(device.user, device);
+  }
+
+  async getSessionUser(userId: number, deviceId: string) {
+    const user = await this.userRepository.findOneOrFail({
+      where: { id: userId },
+      relations: ['roles', 'roles.permissions'],
+    });
+
+    const device = await this.deviceService.getById(deviceId);
+
+    const permissions = this.permissionService.getUserPermissions(user);
+
+    return { user, device, permissions };
   }
 }

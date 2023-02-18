@@ -130,7 +130,7 @@ function AccountMenuItem() {
         <div className={classes.accountWrapper}>
           <Avatar shape="square" icon={<UserOutlined />} />
           <div className={classes.accountContent}>
-            <span className={classes.accountText}>User name</span>
+            <span className={classes.accountText}>{user?.fullName}</span>
           </div>
           <DownOutlined />
         </div>

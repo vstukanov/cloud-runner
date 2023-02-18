@@ -6,21 +6,17 @@ import { AppRouter } from './AppRouter';
 import { AppLoginPage } from './AppLoginPage';
 import { AppLayout } from './AppLayout';
 
-const envUrl =
-  process.env.NODE_ENV === 'development'
-    ? '/api'
-    : (process.env.REACT_APP_API_HOST as string);
-
+const envUrl = process.env.REACT_APP_API_HOST as string;
 const config: ConfigType = {
   baseURL: envUrl,
 };
 
 function Router() {
-  // const { user } = useSession();
-  //
-  // if (!user) {
-  //   return <AppLoginPage />;
-  // }
+  const { user } = useSession();
+
+  if (!user) {
+    return <AppLoginPage />;
+  }
 
   return (
     <AppLayout>
