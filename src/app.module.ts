@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 
 import { CommonModule } from './common/common.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { SeedModule } from './modules/seed/seed.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthModule } from './modules/auth/auth.module';
     }),
     CommonModule,
     AuthModule,
+    SeedModule,
   ],
   controllers: [],
   providers: [],

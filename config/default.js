@@ -18,4 +18,10 @@ module.exports = {
     password_salt: process.env.PASSWORD_SALT,
     jwt_secret: process.env.JWT_SECRET,
   },
+
+  seed: {
+    admin_email: process.env.SEED_ADMIN_EMAIL ?? 'admin',
+    admin_password: process.env.SEED_ADMIN_PASSWORD ?? 'admin',
+    admin_fullname: process.env.SEED_ADMIN_FULLNAME ?? 'Admin',
+  },
 };

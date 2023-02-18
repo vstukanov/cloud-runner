@@ -18,6 +18,7 @@ import { InviteRequestDto } from './dto/invite.request.dto';
 import { UserStatus } from '../../entities/user.entity';
 import { nanoid } from 'nanoid';
 import { InviteCompleteRequestDto } from './dto/invite-complete.request.dto';
+import { AuthPermissions } from './auth.permissions';
 
 @Injectable()
 export class AuthService {
@@ -116,7 +117,7 @@ export class AuthService {
       });
     }
 
-    this.permissionService.require(user, ['auth.login.password']);
+    this.permissionService.require(user, [AuthPermissions.LOGIN_WITH_PASSWORD]);
 
     this.checkTOTP(user, request.totp);
 

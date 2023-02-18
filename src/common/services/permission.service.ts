@@ -1,25 +1,25 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserEntity } from '../../entities';
-import _ from 'lodash';
+import { castArray, flattenDeep, isEmpty, difference } from 'lodash';
 
 @Injectable()
 export class PermissionService {
   check(user: UserEntity, permissions: string[] | string): string[] {
-    const requiredPermissions = _.castArray(permissions);
+    const requiredPermissions = castArray(permissions);
 
-    const existingPermissions = _.flattenDeep(
+    const existingPermissions = flattenDeep(
       user.roles.map((role) =>
         role.permissions.map((permission) => permission.name),
       ),
     );
 
-    return _.difference(requiredPermissions, existingPermissions);
+    return difference(requiredPermissions, existingPermissions);
   }
 
   require(user: UserEntity, permissions: string[] | string) {
     const missingPermissions = this.check(user, permissions);
 
-    if (!_.isEmpty(missingPermissions)) {
+    if (!isEmpty(missingPermissions)) {
       throw new UnauthorizedException({
         reason: 'permission.required',
         permissions,

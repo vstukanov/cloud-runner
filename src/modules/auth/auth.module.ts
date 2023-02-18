@@ -9,5 +9,6 @@ import { DeviceService } from './device.service';
   imports: [TypeOrmModule.forFeature([UserEntity, DeviceEntity])],
   controllers: [AuthController],
   providers: [AuthService, DeviceService],
+  exports: [AuthService, DeviceService],
 })
 export class AuthModule {}
